@@ -3,8 +3,10 @@
 
     <h1><%= title %></h1>
     <p>Branch Details</p>
-  <div>
-  <p> No details yet! </p>
+  
+  <% branches.forEach(function(branch) { %>
+  <%= branches.branchNumber %>
+<% }) %>
 
 
   <% include _footer %>

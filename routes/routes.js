@@ -1,13 +1,14 @@
 var express = require('express');
-var Branch = require('../models/branch');
+
 var router = express.Router();
+var Branch = require('../models/branch');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Banco del Oro' });
 });
 
-/* GET profile entry. */
+/* GET profiler */
 router.get('/profiler', function (req, res, next) {
   res.render('profiler');
 });
@@ -47,10 +48,9 @@ router.get('/branches', function (req, res, next) {
 */
 
 router.post('/profile', function (req, res, next) {
-  var branch = req.body.branchNumber;
+  var branchNumber = req.body.branchNumber;
   var street = req.body.street;
   var city = req.body.city;
-  var state = req.body.state;
   var state = req.body.state;
   var zip = req.body.zip;
   var telephone = req.body.telephone;
@@ -58,33 +58,41 @@ router.post('/profile', function (req, res, next) {
   var managerLastName = req.body.managerLastName;
   var locLat = req.body.locLat;
   var locLng = req.body.locLng;
-  var zip = req.body.zip;
-});
 
-/*
   Branch.findOne({ branch: branchNumber }, function (err, branch) {
     if (err) { return next(err); }
     if (branch) {
       req.flash('error', 'Branch already exists');
-      return res.redirect('/');
+      return res.redirect('/profiler');
     }
 
-    var newUser = new User({
-      username: username,
-      password: password,
-      fname: fname,
-      lname: lname,
-      email: email,
-      telephone: telephone
+    var newBranch = new Branch({
+      branchNumber: branchNumber,
+      street: street,
+      city: city,
+      state: state,
+      zip: zip,
+      telephone: telephone,
+      managerFirstName: managerFirstName,
+      managerLastName: managerLastName,
+      locLat: locLat,
+      locLng: locLng
     });
-    newUser.save(next);
+    newBranch.save();
   });
-}, passport.authenticate('login', {
-  successRedirect: '/users',
-  failureRedirect: '/signup',
-  failureFlash: true
-}));
+});
 
+/* GET branch listing. */
+router.get('/branch-details', function (req, res, next) {
+  Branch.find()
+    .sort({ branchNumber: 'descending' })
+    .exec(function (err, branches) {
+      if (err) { return next(err); }
+      console.log(branches);
+      res.json(branches);
+    });
+});
+/*
 router.get('/branch/:number', function (req, res, next) {
   Branch.findOne({ branch: req.params.braanchNumber }, function (err, branch) {
     if (err) { return next(err); }

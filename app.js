@@ -7,7 +7,6 @@ var flash = require('connect-flash');
 var favicon = require('serve-favicon');
 var routes = require('./routes/routes');
 require('./database/db');
-var mongoose = require('mongoose');
 
 var app = express();
 
