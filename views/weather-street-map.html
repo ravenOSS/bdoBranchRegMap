@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet debug page</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+</head>
+<body>
+
+	<div id="map" style="width: 800px; height: 600px; border: 1px solid #ccc"></div>
+
+	<script>
+		var map = new L.Map('map');
+		var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			osmAttrib = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			osm = L.tileLayer(osmUrl, {attribution: osmAttrib}),
+			osm2 = L.tileLayer(osmUrl, {attribution: osmAttrib});
+		var nexrad = new L.TileLayer.WMS("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
+			layers: 'nexrad-n0r-900913',
+			format: 'image/png',
+			transparent: true,
+			attribution: "Weather data &copy; 2011 IEM Nexrad",
+			opacity: 0.4
+        });
+        39.623924,-105.3823976
+		var bounds = new L.LatLngBounds(new L.LatLng(42, -118), new L.LatLng(35, -81));
+		map.addLayer(osm).addLayer(nexrad).fitBounds(bounds);
+		L.control.layers({"CM": osm, "CM2": osm2}, {"NexRad": nexrad}).addTo(map);
+	</script>
+</body>
+</html>

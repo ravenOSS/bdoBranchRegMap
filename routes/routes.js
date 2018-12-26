@@ -5,17 +5,84 @@ var Branch = require('../models/branch');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Banco del Oro' });
+  res.render('frontpage', { title: 'Banco del Oro', strapline: 'Please register a branch' });
 });
 
 /* GET profiler */
-router.get('/profiler', function (req, res, next) {
-  res.render('profiler');
+router.get('/profileForm', function (req, res, next) {
+  res.render('profileForm');
+});
+
+router.post('/profileForm', function (req, res, next) {
+  var branchNumber = req.body.branchNumber;
+  var city = req.body.city;
+  var state = req.body.state;
+  var lat = req.body.lat;
+  var lng = req.body.lng;
+
+  Branch.findOne({ branchNumber: branchNumber }, function (err, branch) {
+    if (err) { return next(err); }
+    if (branch) {
+      //      req.flash('error', 'Branch already exists');
+      return res.redirect('/profileForm');
+    }
+
+    var newBranch = new Branch({
+      branchNumber: branchNumber,
+      city: city,
+      state: state,
+      lat: lat,
+      lng: lng
+    });
+    newBranch.save();
+  });
+  res.redirect('profileForm');
+});
+
+/* GET branch test data. */
+router.get('/branch-test', function (req, res, next) {
+  Branch.find()
+    .sort({ branchNumber: 'ascending' })
+    .select({_id: 0})
+    .exec(function (err, branches) {
+      if (err) { return next(err); }
+      console.log(branches);
+      res.render('branchDataTest', { title: 'Branch Test', branches: branches });
+    });
+});
+
+/* GET branches data. */
+router.get('/branches', function (req, res, next) {
+  Branch.find()
+    .sort({ branchNumber: 'ascending' })
+    .exec(function (err, branches) {
+      if (err) { return next(err); }
+      console.log(branches);
+      res.render('branchesTable', { title: 'Our Branches', branches: branches });
+    });
+});
+
+/* GET branch locations data. */
+router.get('/branch-locations', function (req, res, next) {
+  Branch.find()
+    .sort({ branchNumber: 'ascending' })
+    .select({_id: 0})
+    .exec(function (err, locations) {
+      if (err) { return next(err); }
+      console.log(`These are our locations ${locations}`);
+      res.json(locations);
+      // res.render('branch-map', { title: 'Our Branches', locations: locations });
+    });
 });
 
 /* GET Locations Map. */
-router.get('/locations', function (req, res, next) {
-  res.render('locations');
+router.get('/branch-map', function (req, res, next) {
+  res.render('branch-map', { title: 'Branch Map' });
+});
+
+/* GET Locations Map. */
+router.get('/leafletLocations', function (req, res, next) {
+  res.render('leafletLocations');
 });
 
 /* render branch profile page. */
@@ -25,7 +92,7 @@ router.get('/branch-details', function (req, res, next) {
 
 /* GET table data content. */
 /*
-router.get('/datatableusers', function (req, res, next) {
+router.get('/datatablebranchs', function (req, res, next) {
   Branch.find()
     .sort({ createdAt: 'descending' })
     .exec(function (err, branches) {
@@ -35,68 +102,21 @@ router.get('/datatableusers', function (req, res, next) {
 });
 */
 
-/* GET users listing. */
-/*
-router.get('/branches', function (req, res, next) {
-  Branch.find()
-    .sort({ createdAt: 'descending' })
-    .exec(function (err, users) {
-      if (err) { return next(err); }
-      res.render('userlist', { users: users });
-    });
-});
-*/
-
-router.post('/profile', function (req, res, next) {
-  var branchNumber = req.body.branchNumber;
-  var street = req.body.street;
-  var city = req.body.city;
-  var state = req.body.state;
-  var zip = req.body.zip;
-  var telephone = req.body.telephone;
-  var managerFirstName = req.body.managerFirstName;
-  var managerLastName = req.body.managerLastName;
-  var locLat = req.body.locLat;
-  var locLng = req.body.locLng;
-
-  Branch.findOne({ branch: branchNumber }, function (err, branch) {
-    if (err) { return next(err); }
-    if (branch) {
-      req.flash('error', 'Branch already exists');
-      return res.redirect('/profiler');
-    }
-
-    var newBranch = new Branch({
-      branchNumber: branchNumber,
-      street: street,
-      city: city,
-      state: state,
-      zip: zip,
-      telephone: telephone,
-      managerFirstName: managerFirstName,
-      managerLastName: managerLastName,
-      locLat: locLat,
-      locLng: locLng
-    });
-    newBranch.save();
-  });
-});
-
-/* GET branch listing. */
-router.get('/branch-details', function (req, res, next) {
-  Branch.find()
-    .sort({ branchNumber: 'descending' })
-    .exec(function (err, branches) {
-      if (err) { return next(err); }
-      console.log(branches);
-      res.json(branches);
-    });
-});
+// /* GET branch listing. */
+// router.get('/branch-details', function (req, res, next) {
+//   Branch.find()
+//     .sort({ branchNumber: 'descending' })
+//     .exec(function (err, branches) {
+//       if (err) { return next(err); }
+//       console.log(`These are the branches ${branches}`);
+//       res.json(branches);
+//     });
+// });
 /*
 router.get('/branch/:number', function (req, res, next) {
   Branch.findOne({ branch: req.params.braanchNumber }, function (err, branch) {
     if (err) { return next(err); }
-    if (!user) { return next(404); }
+    if (!branch) { return next(404); }
     res.render('profile', { branch: branch });
   });
 });

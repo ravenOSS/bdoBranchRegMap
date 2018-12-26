@@ -1,0 +1,58 @@
+<% include partials/_header %>
+<% include partials/_nav %>
+
+<link rel="stylesheet" href="/stylesheets/leaflet.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="/javascripts/leaflet.js"></script>
+
+
+<div class="container">
+  <h2>
+    <%= title %>
+  </h2>
+  
+  <style>
+      #branches {
+          position: center-align;
+          height: 500px;
+          width: 500px;
+      }
+  </style>
+  <br>
+  <div id="branches"></div>
+
+  <script>
+    $(document).ready(function () {
+
+    $.getJSON('http://192.168.0.101:3300/branch-locations', function (locations) {
+
+      var branchmap = L.map('branches').setView([39.7507834, -104.9986242], 10.5);
+
+      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(branchmap);
+
+      locations.forEach(function (location) {
+        (i = 0, i <= locations.length, i++)
+        console.log(location);
+        L.marker([location.lat, location.lng]).addTo(branchmap)
+        .bindPopup(location.branchNumber)
+        .openPopup();
+      })
+
+      L.marker([39.7507834, -104.9986242]).addTo(branchmap)
+        .bindPopup('This is Denver.')
+         .openPopup();
+
+        var circle = L.circle([39.7507834, -104.9986242], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 100
+      }).addTo(branchmap);
+    });
+    })
+  </script>
+
+  <% include partials/_footer %>
+</div>
