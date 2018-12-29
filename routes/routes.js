@@ -2,10 +2,41 @@ var express = require('express');
 
 var router = express.Router();
 var Branch = require('../models/branch');
+var GeoBranch = require('../models/geoBranch');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('frontpage', { title: 'Banco del Oro', strapline: 'Please register a branch' });
+});
+
+/* GET geoProfiler */
+router.get('/geoProfile', function (req, res, next) {
+  res.render('geoProfile');
+});
+
+router.post('/geoProfile', function (req, res, next) {
+  var branchNumber = req.body.branchNumber;
+  var city = req.body.city;
+  var lat = parseFloat(req.body.lat);
+  var lng = parseFloat(req.body.lng);
+
+  GeoBranch.findOne({ branchNumber: branchNumber }, function (err, branch) {
+    if (err) { return next(err); }
+    if (branch) {
+      console.log(`Branch ${branchNumber} already registered`);
+      //      req.flash('error', 'Branch already exists');
+      return res.redirect('/profileForm');
+    }
+
+    var newBranch = new GeoBranch({
+      branchNumber: branchNumber,
+      city: city,
+      location:
+      { type: 'Point', coordinates: [lng, lat] }
+    });
+    newBranch.save();
+  });
+  res.redirect('geoProfile');
 });
 
 /* GET profiler */

@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" href="/stylesheets/leaflet.css" />
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> -->
-<script src="/javascripts/leaflet.js"></script>
+<script src="/javascripts/leaflet-src.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <br>
 <div class="container">
@@ -31,7 +31,7 @@
     document.addEventListener("DOMContentLoaded", function () {
 
 
-      var branchmap = L.map('branches').setView([39.7507834, -104.9986242], 11.25);
+      var branchmap = L.map('branches').setView([39.7507834, -104.9986242], 11);
 
       L.marker([39.7507834, -104.9986242]).addTo(branchmap)
         .bindPopup('This is Denver.')
@@ -57,8 +57,11 @@
             locations.data.forEach(function (location) {
               (i = 0, i <= locations.data.length, i++)
               console.log(location);
+              var popupContent = (location.branchNumber.toString());
+              console.log(popupContent);
               L.marker([location.lat, location.lng]).addTo(branchmap)
-              // .bindPopup(location)
+
+              .bindPopup(popupContent)
               // .openPopup();
             })
           })
@@ -71,7 +74,7 @@
       
       // jQuery method
       // function addBranches() {
-      //   $.getJSON('http://192.168.0.101:3300/branch-locations')  // Do NOT hard code IP
+      //   $.getJSON('http://192.168.0.101:3300/branch-locations')  // Do NOT hard code URL
       //     .done(function (locations) {
 
       //       locations.forEach(function (location) {
