@@ -9,7 +9,6 @@
     <tr>
       <th scope="col">Branch Number</th>
       <th scope="col">City</th>
-      <th scope="col">State</th>
       <th scope="col">Lat</th>
       <th scope="col">Lng</th>
     </tr>
@@ -26,13 +25,10 @@
       <%= branch.city %>
       </td>
       <td>
-        <%= branch.state %>
+      <%= branch.data.coordinates[0] %>
       </td>
       <td>
-      <%= branch.lat %>
-      </td>
-      <td>
-        <%= branch.lng %>
+        <%= branch.data.coordinates[1] %>
       </td>
       <% }) %>
     </tr>
